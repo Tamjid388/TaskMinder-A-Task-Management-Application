@@ -1,5 +1,8 @@
 @import "tailwindcss";
 /* 
+---break--- */
+@custom-variant dark (&:is(.dark *));
+/* 
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
@@ -98,3 +101,14 @@
     @apply bg-background text-foreground;
   }
 } */
+/* 
+---break--- */
+@layer base {
+
+}
+/* 
+---break--- */
+@layer base {
+
+
+}
