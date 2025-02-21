@@ -1,16 +1,27 @@
 import { auth } from "@/Firebase/Firebase.config";
-import { GoogleAuthProvider } from "firebase/auth";
-import { createContext, useEffect } from "react"
+import { GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
+import { createContext, useEffect, useState } from "react"
+import { signInWithPopup } from "firebase/auth";
 
 
 
 export const AuthContext=createContext(null)
 
 export const Authprovider = ({children}) => {
+    const [user,setUser]=useState(null)
+    const [loader,setloader]=useState(true)
+    console.log(user);
 
     useEffect(()=>{
   
+        const unsubscribe= onAuthStateChanged(auth,(currentuser)=>{
+            setUser(currentuser)
+            setloader(false)
 
+        })
+        return ()=>{
+            unsubscribe()
+        }
     },[])
 
 
@@ -23,7 +34,7 @@ export const Authprovider = ({children}) => {
 
 
     const info={
-        signInWithGoogle
+        signInWithGoogle,user
     }
   return (
     <AuthContext.Provider value={info}>
