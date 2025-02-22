@@ -19,7 +19,7 @@ export const GoogleSignin = () => {
         photo: result.user?.photoURL
         
       };
-      axios.post('http://localhost:5000/users',userInfo)
+      axios.post('https://task-minder-server-side.vercel.app/users',userInfo)
       navigate('/')
 
 

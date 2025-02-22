@@ -19,22 +19,32 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 
-import React from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { CiCirclePlus } from "react-icons/ci";
+import { AuthContext } from "../Providers/Authprovider";
 
 export const AddTask = () => {
+    const {user}=useContext(AuthContext)
   const {
     register,
     handleSubmit,
-    watch,
+    watch,reset,
     setValue,
     formState: { errors },
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
-    // axios.post
+   
+  const taskData={
+    ...data,
+    email:user?.email
+  }
+  console.log(taskData);
+  axios.post('https://task-minder-server-side.vercel.app/tasks',taskData)
+  .then(() => {
+    reset(); // Clears the form after successful submission
+  })
   };
   return (
     <div>
