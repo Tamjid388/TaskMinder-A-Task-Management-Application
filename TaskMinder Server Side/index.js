@@ -27,14 +27,47 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    const taskminder=client.db("taskminder_db")
+    const usersCollections=taskminder.collection('users')
+    const tasksCollections=taskminder.collection('tasks')
+
+    app.post('/users',async(req,res)=>{
+        const user=req.body
+        console.log(user);
+        const existingUser=await usersCollections.findOne({email:user.email})
+       if(existingUser){
+        return res.status(400).send('User Already Exists')
+       }
+        const result=await usersCollections.insertOne(user)
+    })
+   app.get('/users',async(req,res)=>{
+    const user=await usersCollections.findOne()
+   })
+app.post('/tasks',async(req,res)=>{
+    const tasks=req.body
+    const result=await tasksCollections.insertOne(tasks)
+   
+})
+app.get('/tasks', async (req, res) => {
+    const email=req.query.email
+  const query={email:email}
+    const tasks = await tasksCollections.find(query).toArray();
+    res.send(tasks);
+});
+
+
+
+
+
+
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // await client.db("admin").command({ ping: 1 });
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
