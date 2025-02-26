@@ -1,5 +1,5 @@
 import { auth } from "@/Firebase/Firebase.config";
-import { GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
+import { GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
 import { createContext, useEffect, useState } from "react"
 import { signInWithPopup } from "firebase/auth";
 
@@ -24,6 +24,11 @@ export const Authprovider = ({children}) => {
         }
     },[])
 
+    const signOutUser = () => {
+        setloader(true)
+        return signOut(auth)
+    }
+
 
       // Google Sign-In
       const googleProvider = new GoogleAuthProvider();
@@ -34,7 +39,7 @@ export const Authprovider = ({children}) => {
 
 
     const info={
-        signInWithGoogle,user
+        signInWithGoogle,user,signOutUser
     }
   return (
     <AuthContext.Provider value={info}>

@@ -3,6 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import { AuthContext } from "../Providers/Authprovider";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import Swal from "sweetalert2";
 
 
 
@@ -19,18 +20,30 @@ export const GoogleSignin = () => {
         photo: result.user?.photoURL
         
       };
+      console.log("UserInfo Sent",userInfo);
       axios.post('https://task-minder-server-side.vercel.app/users',userInfo)
-      navigate('/')
+      // axios.post('http://localhost:5000/users',userInfo)
+      .then(response => {
+           Swal.fire({
+                title: "SignIn Successfull!",
+                icon: "success",
+                draggable: true
+              });
+        navigate('/home');
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
 
 
       
-      }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log('SignIn Failed',errorMessage);
-     
-      });
+      })
+
+
+
+
+
+      
     }
   return (
     <div onClick={handleGoogleSignIn} className='flex items-center gap-2'>

@@ -13,7 +13,7 @@ export const SignIn = () => {
     const { register, handleSubmit, formState: { errors } } 
     = useForm();
     const onSubmit = (data) => {
-        console.log(data);
+        // console.log(data);
       };
   return (
   <div className='flex bg-gray-100   h-screen items-center'>
@@ -22,7 +22,7 @@ export const SignIn = () => {
     <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">Sign In</h2>
 
    {/* Email Field */}
-   <div className="mb-4">
+   {/* <div className="mb-4">
         <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
           Email
         </Label>
@@ -33,10 +33,10 @@ export const SignIn = () => {
           className="mt-2 p-2 w-full border border-gray-300 rounded-md"
         />
         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
-      </div>
+      </div> */}
 
          {/* Password Field */}
-         <div className="mb-6">
+         {/* <div className="mb-6">
         <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
           Password
         </Label>
@@ -47,7 +47,7 @@ export const SignIn = () => {
           className="mt-2 p-2 w-full border border-gray-300 rounded-md"
         />
         {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
-      </div>
+      </div> */}
 
        {/* Sign In Button */}
        <Button
