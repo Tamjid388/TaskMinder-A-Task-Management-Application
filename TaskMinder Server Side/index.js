@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 // TaskMinder
 // CkI8lBLCDPzonYd3
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zovp9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -46,19 +46,46 @@ async function run() {
    app.get('/users',async(req,res)=>{
     const user=await usersCollections.findOne()
    })
+
+
 app.post('/tasks',async(req,res)=>{
     const tasks=req.body
+    console.log(tasks);
     const result=await tasksCollections.insertOne(tasks)
+    res.send(result)
    
 })
 app.get('/tasks', async (req, res) => {
     const email=req.query.email
+    console.log("Received email:", email);
   const query={email:email}
+
     const tasks = await tasksCollections.find(query).toArray();
+    // console.log(tasks);
     res.send(tasks);
 });
 
+app.delete('/tasks/:id', async (req, res) => {
+  const taskId = req.params.id;
+  console.log(taskId);
+  const query = { _id: new ObjectId(taskId) };
+  const result = await tasksCollections.deleteOne(query);
+  
+  res.send(result);
+});
+// .....................................
 
+// 📌 **Update task status **
+app.put('/tasks/:id', async (req, res) => {
+  const taskId = req.params.id;
+  const updatedData = req.body;
+
+  const filter = { _id: new ObjectId(taskId) };
+  const updateDoc = { $set: updatedData };
+
+  const result = await tasksCollections.updateOne(filter, updateDoc);
+  res.send(result);
+});
 
 
 
