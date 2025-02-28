@@ -39,7 +39,7 @@ export const Authprovider = ({children}) => {
 
 
     const info={
-        signInWithGoogle,user,signOutUser
+        signInWithGoogle,user,signOutUser,loader
     }
   return (
     <AuthContext.Provider value={info}>

@@ -4,6 +4,7 @@ import { MainLayout } from '../Layout/MainLayout'
 import { HomePage } from '../Pages/Home/HomePage'
 import { SignIn } from '@/Pages/SignIn/SignIn'
 import { Intro } from '@/Pages/IntroPage/Intro'
+import { Privateroute } from './Privateroute'
 
 export const Router = () => {
   return (
@@ -11,7 +12,11 @@ export const Router = () => {
     <Routes>
         <Route path='/' element={<MainLayout></MainLayout>}>
         <Route path='/' element={<Intro></Intro>}></Route>
-        <Route path='/home' element={<HomePage></HomePage>}>
+        <Route path='/home' element={
+          <Privateroute>
+            <HomePage></HomePage>
+          </Privateroute>
+        }>
         </Route>
         </Route>
 

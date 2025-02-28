@@ -1,136 +1,66 @@
-// import { Button } from "@/components/ui/button";
-// import { CiCirclePlus } from "react-icons/ci";
-// import { TODO } from "../TODO/TODO";
-// import { useQuery } from "@tanstack/react-query";
-// import axios from "axios";
-// import { useContext } from "react";
-// import { AuthContext } from "../Providers/Authprovider";
-// import { Dnd } from "../DNDKIT/Dnd";
-
-
-
-
-
-
-// export const TaskBoard = () => {
-//     const {user}=useContext(AuthContext)
-//     const {ispending,data:tasks}=useQuery({
-//         queryKey:['tasks',user?.email],
-//         queryFn:async()=>{
-//             const res=await axios.get(`https://task-minder-server-side.vercel.app/tasks?email=${user?.email}`)
-//              return res.data 
-            
-//         }
-//     })
-    
-//     if(ispending){
-//         return <h1>Loading....</h1>
-//     }
-//   return (
-//     <div>
-//      <div className="border-1 my-8 text-gray-500"></div>
-//         <h1 className='text-3xl font-bold mb-6'>
-//         Task Board
-//         </h1>
-    
-
-// <TODO tasks={tasks}></TODO>
-
-
-
-
-
-
-
-//     </div>
-//   )
-// }
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { CiCirclePlus } from "react-icons/ci";
 import { TODO } from "../TODO/TODO";
-
-import { DragDropContext, Droppable } from "@hello-pangea/dnd";
-import { Done } from "../DONE/Done";
-import { Inprogress } from "../InProgress/Inprogress";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { useContext } from "react";
 import { AuthContext } from "../Providers/Authprovider";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import { Inprogress } from "../InProgress/InProgress";
+import { Done } from "../DONE/Done";
+
 
 export const TaskBoard = () => {
-  const { user } = useContext(AuthContext);
-  const { ispending, data: tasks } = useQuery({
-    queryKey: ["tasks", user?.email],
-    queryFn: async () => {
-      const res = await axios.get(`https://task-minder-server-side.vercel.app/tasks?email=${user?.email}`);
-      return res.data;
+    const {user}=useContext(AuthContext)
+    const {isPending,data:tasks,refetch}=useQuery({
+        queryKey:['tasks',user?.email],
+        queryFn:async()=>{
+            const res=await axios.get(`http://localhost:5000/tasks?email=${user?.email}`)
+             return res.data 
+            
+        }
+    })
+    console.log(tasks);
+ 
+
+
+  
+    if(isPending){
+        return <h1>Loading....</h1>
     }
-  });
-
-  const queryClient = useQueryClient();
-
-  const handleDragEnd = async (result) => {
-    if (!result.destination) return; // Ignore if dropped outside
-
-    const { source, destination } = result;
-    const updatedTasks = Array.from(tasks);
-
-    // Find and remove the moved task
-    const [movedTask] = updatedTasks.splice(source.index, 1);
-
-    // Update its status if moved between lists
-    if (source.droppableId !== destination.droppableId) {
-      movedTask.status = destination.droppableId;
-    }
-
-    // Insert at the new location
-    updatedTasks.splice(destination.index, 0, movedTask);
-
-    // Update UI optimistically
-    queryClient.setQueryData(["tasks", user?.email], updatedTasks);
-
-    // Send update to backend
-    await axios.put("https://task-minder-server-side.vercel.app/updateTask", {
-      email: user?.email,
-      taskId: movedTask._id,
-      newStatus: movedTask.status,
-    });
-  };
-
-  if (ispending) {
-    return <h1>Loading....</h1>;
-  }
-
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex gap-4">
-        {/* To-Do List */}
-        <Droppable droppableId="To-Do">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              <TODO tasks={tasks} />
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+    <DragDropContext  >
+    <div className=" my-8 grid gap-8 md:space-x-12 lg:gap-0.5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">
+      {/* "To-Do" List */}
+      <Droppable droppableId="To-Do">
+        {(provided) => (
+          <div {...provided.droppableProps} ref={provided.innerRef}>
+            <TODO tasks={tasks} refetch={refetch}/>
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
 
-        {/* In Progress List */}
-        <Droppable droppableId="In-Progress">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              <Inprogress tasks={tasks} />
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+      {/* "In Progress" List */}
+      <Droppable droppableId="In-Progress">
+        {(provided) => (
+          <div {...provided.droppableProps} ref={provided.innerRef}>
+            <Inprogress tasks={tasks} refetch={refetch} />
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
 
-        {/* Done List */}
-        <Droppable droppableId="Done">
+       {/* Done List */}
+       <Droppable droppableId="Done">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              <Done tasks={tasks} />
+              <Done tasks={tasks} refetch={refetch} />
               {provided.placeholder}
             </div>
           )}
         </Droppable>
-      </div>
-    </DragDropContext>
-  );
-};
+    </div>
+  </DragDropContext>
+  )
+}

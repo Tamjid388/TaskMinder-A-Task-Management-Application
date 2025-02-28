@@ -21,33 +21,7 @@ export const SignIn = () => {
       <form onSubmit={handleSubmit(onSubmit)} className=" max-h-fit mx-auto bg-white p-8 rounded-lg shadow-lg ">
     <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">Sign In</h2>
 
-   {/* Email Field */}
-   {/* <div className="mb-4">
-        <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email
-        </Label>
-        <Input
-          {...register("email", { required: "Email is required", pattern: { value: /\S+@\S+\.\S+/, message: "Invalid email format" } })}
-          id="email"
-          type="email"
-          className="mt-2 p-2 w-full border border-gray-300 rounded-md"
-        />
-        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
-      </div> */}
-
-         {/* Password Field */}
-         {/* <div className="mb-6">
-        <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Password
-        </Label>
-        <Input
-          {...register("password", { required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters long" } })}
-          id="password"
-          type="password"
-          className="mt-2 p-2 w-full border border-gray-300 rounded-md"
-        />
-        {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
-      </div> */}
+  
 
        {/* Sign In Button */}
        <Button
@@ -64,7 +38,7 @@ export const SignIn = () => {
 
 
       <Link to={'/'}>
-      <p className='text-sm font-semibold underline mt-2'> Back TO Home</p>
+      <p className='text-sm font-semibold underline mt-2'> Back </p>
       </Link>
 
 

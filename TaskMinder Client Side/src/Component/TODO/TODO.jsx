@@ -1,63 +1,100 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { Button } from "@/components/ui/button";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
-export const TODO = ({tasks}) => {
-  
-    const todo = tasks?.filter((task) => task.status === 'To-Do');
-  // Handle drag end
-  const handleDragEnd = (result) => {
-    if (!result.destination) return; // If dropped outside, do nothing
+export const TODO = ({ tasks, refetch }) => {
+  const todo = tasks?.filter((task) => task.status === "To-Do");
+  const [editingTask, setEditingTask] = useState(null); // Track the task being edited
 
-    const reorderedTasks = [...todo];
-    const [movedTask] = reorderedTasks.splice(result.source.index, 1);
-    reorderedTasks.splice(result.destination.index, 0, movedTask);
+  const { register, handleSubmit, setValue } = useForm();
 
-    // Update the state with the new order
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        reorderedTasks.find((t) => t.id === task.id) || task
-      )
-    );
+  const onSubmit = (data) => {
+    console.log("Form submitted with data:", data);
+
+    axios
+      .put(`http://localhost:5000/tasks/${editingTask._id}`, data)
+      .then(() => {
+        Swal.fire("Task updated successfully!");
+        setEditingTask(null);
+        refetch();
+      })
+      .catch(() => {
+        Swal.fire("Error updating task");
+      });
   };
 
-
+  const handleDelete = (id) => {
+    axios
+      .delete(`http://localhost:5000/tasks/${id}`)
+      .then(() => {
+        Swal.fire("Task deleted");
+        refetch();
+      })
+      .catch(() => {
+        Swal.fire("Error deleting task");
+      });
+  };
 
   return (
-    <div>
-    <div className="bg-gray-200 w-96 rounded-xl p-4 shadow-md">
+    <div className="bg-gray-200   rounded-xl p-4 shadow-md min-h-[300px]">
       <h1 className="text-lg font-semibold text-gray-800 mb-2">To-Do</h1>
 
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="todo-list">
-          {(provided) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="space-y-2"
-            >
-              {todo?.length > 0 ? (
-                todo.map((mytask, idx) => (
-                  <Draggable key={mytask._id} draggableId={mytask._id} index={idx}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="p-2 bg-green-400 rounded-md shadow-md"
-                      >
-                        {mytask.title}
+      <div className="space-y-2">
+        {todo?.length > 0 ? (
+          todo.map((task, idx) => (
+            <Draggable key={task._id} draggableId={task._id} index={idx}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                  className="p-2 bg-white rounded-md shadow-md flex flex-col gap-2"
+                >
+                  {editingTask?._id === task._id ? (
+                    // Show the form when in editing mode
+                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+                      <input
+                        {...register("title")}
+                      
+                        className="border p-1 rounded"
+                      />
+                      <input
+                        {...register("description")}
+                       
+                        className="border p-1 rounded"
+                      />
+                      <div className="flex gap-2">
+                        <Button type="submit" className="bg-black text-white">Save</Button>
+                        <Button variant="outline" onClick={() => setEditingTask(null)} className=" text-black">Cancel</Button>
                       </div>
-                    )}
-                  </Draggable>
-                ))
-              ) : (
-                <p>No tasks available</p>
+                    </form>
+                  ) : (
+                    // Show task details if not in edit mode
+                    <>
+                      <div className="flex justify-between items-center">
+                        <span>{task.title}</span>
+                        <div className="flex gap-2">
+                          <Button onClick={() => setEditingTask(task)} className="bg-black text-white">
+                            Edit
+                          </Button>
+                          <Button variant="outline" onClick={() => handleDelete(task._id)} className=" text-black">
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               )}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+            </Draggable>
+          ))
+        ) : (
+          <p>No tasks available</p>
+        )}
+      </div>
     </div>
-  </div>
-  )
-}
+  );
+};

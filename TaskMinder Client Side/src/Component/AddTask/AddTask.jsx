@@ -23,6 +23,8 @@ import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { CiCirclePlus } from "react-icons/ci";
 import { AuthContext } from "../Providers/Authprovider";
+import Swal from "sweetalert2";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const AddTask = () => {
     const {user}=useContext(AuthContext)
@@ -33,7 +35,7 @@ export const AddTask = () => {
     setValue,
     formState: { errors },
   } = useForm();
-
+  const queryClient = useQueryClient();
   const onSubmit = (data) => {
    
   const taskData={
@@ -41,18 +43,21 @@ export const AddTask = () => {
     email:user?.email
   }
   console.log(taskData);
-  axios.post('https://task-minder-server-side.vercel.app/tasks',taskData)
+  axios.post('http://localhost:5000/tasks',taskData)
   .then(() => {
-    reset(); // Clears the form after successful submission
+    queryClient.invalidateQueries(['tasks']);
+    reset(); 
   })
   };
   return (
-    <div>
+    <div className="my-6 ">
+     
       <Dialog className="">
         <DialogTrigger asChild>
-          <section className="w-48 bg-[#7ec8e3] rounded-xl h-24 px-4 py-2">
-            <h1 className="font-medium text-gray-600">Create Task</h1>
-            <CiCirclePlus className="font-bold text-2xl mt-2" />
+          <section className=" bg-gray-200 rounded-xl min-h-[300px] px-4 py-2 flex flex-col
+           justify-center items-center ">
+            <h1 className="text-3xl text-blue-600 font-bold">Create Task</h1>
+            <CiCirclePlus className="font-bold text-4xl mt-2" />
           </section>
         </DialogTrigger>
 
@@ -60,7 +65,7 @@ export const AddTask = () => {
           <form action="" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <Label>Title</Label>
-              <Input {...register("title")} className="mt-2" />
+              <Input {...register("title",{maxLength:50})} className="mt-2" />
             </div>
             <div>
               <Label>Description</Label>
@@ -69,7 +74,7 @@ export const AddTask = () => {
             <div>
               <Label>Status</Label>
               <Select
-                className=""
+                className="" 
                 onValueChange={(value) => setValue("status", value)}
               >
                 <SelectTrigger className="mt-2">
@@ -84,12 +89,17 @@ export const AddTask = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="mt-3 bg-black text-white">
+   <div className="flex justify-end">
+   <Button type="submit" className="mt-6 bg-black  text-white">
               Submit
             </Button>
+   </div>
           </form>
         </DialogContent>
       </Dialog>
+    
+    {/* Divider */}
+    <div className="border-b-2 my-6 border-gray-400"></div>
     </div>
   );
 };
